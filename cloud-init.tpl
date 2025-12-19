@@ -72,14 +72,14 @@ runcmd:
   - chmod +x /opt/cloud-init-scripts/01-os-check.sh /opt/cloud-init-scripts/02-sshd-config.sh /opt/cloud-init-scripts/03-cloudflare-dns.sh /opt/cloud-init-scripts/04-hysteria-setup.sh /opt/cloud-init-scripts/05-certbot-setup.sh /opt/cloud-init-scripts/06-nginx-v2ray.sh /opt/cloud-init-scripts/07-system-tweaks.sh /opt/cloud-init-scripts/08-v2ray-setup.sh
   
   # Verify scripts were downloaded successfully
-  - if [ ! -f /opt/cloud-init-scripts/01-os-check.sh ]; then echo "Failed to download 01-os-check.sh"; exit 1; fi
-  - if [ ! -f /opt/cloud-init-scripts/02-sshd-config.sh ]; then echo "Failed to download 02-sshd-config.sh"; exit 1; fi
-  - if [ ! -f /opt/cloud-init-scripts/03-cloudflare-dns.sh ]; then echo "Failed to download 03-cloudflare-dns.sh"; exit 1; fi
-  - if [ ! -f /opt/cloud-init-scripts/04-hysteria-setup.sh ]; then echo "Failed to download 04-hysteria-setup.sh"; exit 1; fi
-  - if [ ! -f /opt/cloud-init-scripts/05-certbot-setup.sh ]; then echo "Failed to download 05-certbot-setup.sh"; exit 1; fi
-  - if [ ! -f /opt/cloud-init-scripts/06-nginx-v2ray.sh ]; then echo "Failed to download 06-nginx-v2ray.sh"; exit 1; fi
-  - if [ ! -f /opt/cloud-init-scripts/07-system-tweaks.sh ]; then echo "Failed to download 07-system-tweaks.sh"; exit 1; fi
-  - if [ ! -f /opt/cloud-init-scripts/08-v2ray-setup.sh ]; then echo "Failed to download 08-v2ray-setup.sh"; exit 1; fi
+  - if [ ! -f /opt/cloud-init-scripts/01-os-check.sh ]; then echo "Failed to download 01-os-check.sh"; fi
+  - if [ ! -f /opt/cloud-init-scripts/02-sshd-config.sh ]; then echo "Failed to download 02-sshd-config.sh"; fi
+  - if [ ! -f /opt/cloud-init-scripts/03-cloudflare-dns.sh ]; then echo "Failed to download 03-cloudflare-dns.sh"; fi
+  - if [ ! -f /opt/cloud-init-scripts/04-hysteria-setup.sh ]; then echo "Failed to download 04-hysteria-setup.sh"; fi
+  - if [ ! -f /opt/cloud-init-scripts/05-certbot-setup.sh ]; then echo "Failed to download 05-certbot-setup.sh"; fi
+  - if [ ! -f /opt/cloud-init-scripts/06-nginx-v2ray.sh ]; then echo "Failed to download 06-nginx-v2ray.sh"; fi
+  - if [ ! -f /opt/cloud-init-scripts/07-system-tweaks.sh ]; then echo "Failed to download 07-system-tweaks.sh"; fi
+  - if [ ! -f /opt/cloud-init-scripts/08-v2ray-setup.sh ]; then echo "Failed to download 08-v2ray-setup.sh"; fi
 
   - echo "Executing OS Check script (01-os-check.sh)..."
   - bash /opt/cloud-init-scripts/01-os-check.sh || { echo "OS Check Script failed, halting runcmd execution."; exit 1; }
@@ -97,15 +97,28 @@ runcmd:
   - ufw status verbose
   - echo "UFW firewall configured and enabled."
 
-  - echo "Executing SSHD Configuration script (02-sshd-config.sh)..."
-  - bash /opt/cloud-init-scripts/02-sshd-config.sh || { echo "SSHD config script failed."; exit 1; }
-  - echo "Restarting SSH service..."
-  # systemctl restart ssh might fail if the service name is sshd on some systems
-  - if systemctl list-units --full -all | grep -q 'ssh.service'; then systemctl restart ssh; elif systemctl list-units --full -all | grep -q 'sshd.service'; then systemctl restart sshd; else echo "Failed to find ssh or sshd service to restart."; exit 1; fi
-  - echo "SSH service restarted."
+  - |
+    {
+      set -e
+      echo "Executing SSHD Configuration script (02-sshd-config.sh)..."
+      bash /opt/cloud-init-scripts/02-sshd-config.sh
+      sleep 1
+      echo "Restarting SSH service..."
+      # systemctl restart ssh might fail if the service name is sshd on some systems
+      if systemctl list-units --full --all | grep -q 'ssh.service'; then
+          systemctl restart ssh
+      elif systemctl list-units --full --all | grep -q 'sshd.service'; then
+          systemctl restart sshd
+      else
+          echo "Failed to find ssh or sshd service to restart." >&2
+          exit 1
+      fi
+      echo "SSH service restarted."
+    } || echo "SSHD configuration block failed, but continuing with next commands."
+
 
   - echo "Executing Cloudflare DNS Update script (03-cloudflare-dns.sh)..."
-  - bash /opt/cloud-init-scripts/03-cloudflare-dns.sh || { echo "Cloudflare DNS script failed."; exit 1; }
+  - bash /opt/cloud-init-scripts/03-cloudflare-dns.sh || { echo "Cloudflare DNS script failed."; }
   - echo "Cloudflare DNS script completed."
   - echo "Waiting 5 minutes (300 seconds) for DNS propagation..."
   - sleep 300
@@ -119,7 +132,7 @@ runcmd:
   - sleep 5 # Give services a moment to release ports
 
   - echo "Executing Hysteria Setup script (04-hysteria-setup.sh)..."
-  - bash /opt/cloud-init-scripts/04-hysteria-setup.sh || { echo "Hysteria Setup script failed."; exit 1; }
+  - bash /opt/cloud-init-scripts/04-hysteria-setup.sh || { echo "Hysteria Setup script failed."; }
 
   # Stop Nginx/Apache again before Certbot, just in case Hysteria somehow started them (unlikely)
   # or if Hysteria ACME didn't use port 80 and something else grabbed it.
