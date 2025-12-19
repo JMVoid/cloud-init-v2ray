@@ -59,14 +59,14 @@ runcmd:
   # Download execution scripts from GitHub repository
   - echo "Downloading execution scripts from GitHub..."
   - mkdir -p /opt/cloud-init-scripts
-  - curl -L -o /opt/cloud-init-scripts/01-os-check.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/master/01-os-check.sh
-  - curl -L -o /opt/cloud-init-scripts/02-sshd-config.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/master/02-sshd-config.sh
-  - curl -L -o /opt/cloud-init-scripts/03-cloudflare-dns.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/master/03-cloudflare-dns.sh
-  - curl -L -o /opt/cloud-init-scripts/04-hysteria-setup.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/master/04-hysteria-setup.sh
-  - curl -L -o /opt/cloud-init-scripts/05-certbot-setup.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/master/05-certbot-setup.sh
-  - curl -L -o /opt/cloud-init-scripts/06-nginx-v2ray.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/master/06-nginx-v2ray.sh
-  - curl -L -o /opt/cloud-init-scripts/07-system-tweaks.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/master/07-system-tweaks.sh
-  - curl -L -o /opt/cloud-init-scripts/08-v2ray-setup.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/master/08-v2ray-setup.sh
+  - curl -L -o /opt/cloud-init-scripts/01-os-check.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/refs/heads/master/01-os-check.sh
+  - curl -L -o /opt/cloud-init-scripts/02-sshd-config.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/refs/heads/master/02-sshd-config.sh
+  - curl -L -o /opt/cloud-init-scripts/03-cloudflare-dns.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/refs/heads/master/03-cloudflare-dns.sh
+  - curl -L -o /opt/cloud-init-scripts/04-hysteria-setup.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/refs/heads/master/04-hysteria-setup.sh
+  - curl -L -o /opt/cloud-init-scripts/05-certbot-setup.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/refs/heads/master/05-certbot-setup.sh
+  - curl -L -o /opt/cloud-init-scripts/06-nginx-v2ray.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/refs/heads/master/06-nginx-v2ray.sh
+  - curl -L -o /opt/cloud-init-scripts/07-system-tweaks.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/refs/heads/master/07-system-tweaks.sh
+  - curl -L -o /opt/cloud-init-scripts/08-v2ray-setup.sh https://raw.githubusercontent.com/JMVoid/cloud-init-v2ray/refs/heads/master/08-v2ray-setup.sh
   
   # Set executable permissions for downloaded scripts
   - chmod +x /opt/cloud-init-scripts/01-os-check.sh /opt/cloud-init-scripts/02-sshd-config.sh /opt/cloud-init-scripts/03-cloudflare-dns.sh /opt/cloud-init-scripts/04-hysteria-setup.sh /opt/cloud-init-scripts/05-certbot-setup.sh /opt/cloud-init-scripts/06-nginx-v2ray.sh /opt/cloud-init-scripts/07-system-tweaks.sh /opt/cloud-init-scripts/08-v2ray-setup.sh
